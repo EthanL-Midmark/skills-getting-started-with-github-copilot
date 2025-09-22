@@ -5,63 +5,260 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mergington High School Activities</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      line-height: 1.6;
     }
+    
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
     h1 {
       text-align: center;
-      margin-top: 2rem;
-      color: #333;
+      margin: 0;
+      color: #2d3748;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    
+    .subtitle {
+      text-align: center;
+      margin-top: 0.5rem;
+      color: #718096;
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+    
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 0 1.5rem 3rem;
     }
+    
     .activity-card {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
       margin-bottom: 2rem;
-      padding: 1.5rem;
-      border-radius: 10px;
-      background: #fff;
-      border: 1px solid #e0e0e0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .participants-section {
-      margin-top: 1.2rem;
-      background: #f7f7fa;
-      border-radius: 8px;
-      padding: 0.8rem 1rem;
+    
+    .activity-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
     }
-    .participants-section h4 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.05rem;
-      color: #4a4a4a;
+    
+    .activity-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .activity-card h2 {
+      margin: 0 0 1rem 0;
+      color: #2d3748;
+      font-size: 1.75rem;
       font-weight: 600;
     }
+    
+    .activity-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .info-item {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .info-item strong {
+      display: block;
+      color: #4a5568;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-item span {
+      color: #2d3748;
+      font-size: 1rem;
+    }
+    
+    .participants-section {
+      background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .participants-section h4 {
+      margin: 0 0 1rem 0;
+      color: #2d3748;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .participants-section h4::before {
+      content: '👥';
+      font-size: 1.2rem;
+    }
+    
     .participants-list {
       margin: 0;
-      padding-left: 1.2rem;
-      color: #333;
+      padding: 0;
+      list-style: none;
     }
+    
     .participants-list li {
-      margin-bottom: 0.25rem;
-      font-size: 0.98rem;
-      letter-spacing: 0.01em;
+      background: white;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      color: #4a5568;
+      font-size: 0.95rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-left: 3px solid #667eea;
+      transition: all 0.2s ease;
     }
-    /* Add any additional custom styles here */
+    
+    .participants-list li:hover {
+      transform: translateX(5px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .participants-list li em {
+      color: #a0aec0;
+      font-style: normal;
+    }
+    
+    .signup-form {
+      background: #f7fafc;
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 2px dashed #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .signup-form:hover {
+      border-color: #667eea;
+      background: #edf2f7;
+    }
+    
+    .form-group {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+    }
+    
+    .form-group input[type="email"] {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+      color: #2d3748;
+    }
+    
+    .form-group input[type="email"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-group button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+    
+    .form-group button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .form-group button:active {
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem 2rem;
+      }
+      
+      .activity-card {
+        padding: 1.5rem;
+      }
+      
+      .activity-info {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-group {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="header">
     <h1>Extracurricular Activities</h1>
+    <p class="subtitle">Discover and join amazing activities at Mergington High School</p>
+  </div>
+  
+  <div class="container">
     <div id="activities-container">
       <!-- Activity cards will be injected here by JavaScript -->
     </div>
   </div>
+  
   <script>
     async function fetchActivities() {
       const response = await fetch('/activities');
@@ -76,21 +273,36 @@
         card.className = 'activity-card';
         card.innerHTML = `
           <h2>${name}</h2>
-          <p><strong>Description:</strong> ${info.description}</p>
-          <p><strong>Schedule:</strong> ${info.schedule}</p>
-          <p><strong>Max Participants:</strong> ${info.max_participants}</p>
+          <div class="activity-info">
+            <div class="info-item">
+              <strong>Description</strong>
+              <span>${info.description}</span>
+            </div>
+            <div class="info-item">
+              <strong>Schedule</strong>
+              <span>${info.schedule}</span>
+            </div>
+            <div class="info-item">
+              <strong>Max Participants</strong>
+              <span>${info.max_participants}</span>
+            </div>
+          </div>
           <div class="participants-section">
-            <h4>Participants</h4>
+            <h4>Participants (${info.participants.length})</h4>
             <ul class="participants-list">
               ${info.participants.length === 0
-                ? '<li><em>No participants yet</em></li>'
+                ? '<li><em>No participants yet - be the first to join!</em></li>'
                 : info.participants.map(email => `<li>${email}</li>`).join('')}
             </ul>
           </div>
-          <form onsubmit="signupForActivity(event, '${name}')">
-            <input type="email" id="email-${name}" placeholder="Your email" required>
-            <button type="submit">Sign Up</button>
-          </form>
+          <div class="signup-form">
+            <form onsubmit="signupForActivity(event, '${name}')">
+              <div class="form-group">
+                <input type="email" id="email-${name}" placeholder="Enter your email address" required>
+                <button type="submit">Join Activity</button>
+              </div>
+            </form>
+          </div>
         `;
         container.appendChild(card);
       });
