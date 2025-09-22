@@ -1,0 +1,224 @@
+"""
+High School Management System API
+
+A super simple FastAPI application that allows students to view and sign up
+for extracurricular activities at Mergington High School.
+"""
+
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
+import os
+from pathlib import Path
+
+app = FastAPI(title="Mergington High School API",
+              description="API for viewing and signing up for extracurricular activities")
+
+# Mount the static files directory
+current_dir = Path(__file__).parent
+app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
+          "static")), name="static")
+
+# In-memory activity database
+activities = {
+    "Chess Club": {
+        "description": "Learn strategies and compete in chess tournaments",
+        "schedule": "Fridays, 3:30 PM - 5:00 PM",
+        "max_participants": 12,
+        "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+    },
+    "Programming Class": {
+        "description": "Learn programming fundamentals and build software projects",
+        "schedule": "Tuesdays and Thursdays, 3:30 PM - 4:30 PM",
+        "max_participants": 20,
+        "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    },
+    "Gym Class": {
+        "description": "Physical education and sports activities",
+        "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
+        "max_participants": 30,
+        "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    # Sports related activities
+    "Soccer Team": {
+        "description": "Join the school soccer team and compete in matches",
+        "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 18,
+        "participants": ["alex@mergington.edu", "lucas@mergington.edu"]
+    },
+    "Basketball Club": {
+        "description": "Practice basketball skills and play friendly games",
+        "schedule": "Thursdays, 3:30 PM - 5:00 PM",
+        "max_participants": 15,
+        "participants": ["mia@mergington.edu", "noah@mergington.edu"]
+    },
+    # Artistic activities
+    "Art Workshop": {
+        "description": "Explore painting, drawing, and sculpture techniques",
+        "schedule": "Mondays, 4:00 PM - 5:30 PM",
+        "max_participants": 16,
+        "participants": ["ava@mergington.edu", "liam@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Act in plays and learn stage performance skills",
+        "schedule": "Fridays, 3:30 PM - 5:30 PM",
+        "max_participants": 20,
+        "participants": ["ella@mergington.edu", "jack@mergington.edu"]
+    },
+    # Intellectual activities
+    "Math Olympiad": {
+        "description": "Prepare for math competitions and solve challenging problems",
+        "schedule": "Tuesdays, 4:00 PM - 5:00 PM",
+        "max_participants": 10,
+        "participants": ["ethan@mergington.edu", "grace@mergington.edu"]
+    },
+    "Science Club": {
+        "description": "Conduct experiments and explore scientific concepts",
+        "schedule": "Thursdays, 4:00 PM - 5:30 PM",
+        "max_participants": 14,
+        "participants": ["chloe@mergington.edu", "ben@mergington.edu"]
+    }
+}
+
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/static/index.html")
+
+
+@app.get("/activities")
+def get_activities():
+    return activities
+
+
+@app.post("/activities/{activity_name}/signup")
+def signup_for_activity(activity_name: str, email: str):
+    """Sign up a student for an activity"""
+    # Validate activity exists
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    # Get the specific activity
+    activity = activities[activity_name]
+
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student is already signed up")
+    # Add student
+    activity["participants"].append(email)
+    return {"message": f"Signed up {email} for {activity_name}"}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mergington High School Activities</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 2rem;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .activity-card {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+    }
+    .participants-section {
+      margin-top: 1.2rem;
+      background: #f7f7fa;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+    }
+    .participants-section h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.05rem;
+      color: #4a4a4a;
+      font-weight: 600;
+    }
+    .participants-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #333;
+    }
+    .participants-list li {
+      margin-bottom: 0.25rem;
+      font-size: 0.98rem;
+      letter-spacing: 0.01em;
+    }
+    /* Add any additional custom styles here */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Extracurricular Activities</h1>
+    <div id="activities-container">
+      <!-- Activity cards will be injected here by JavaScript -->
+    </div>
+  </div>
+  <script>
+    async function fetchActivities() {
+      const response = await fetch('/activities');
+      return response.json();
+    }
+
+    function renderActivities(activities) {
+      const container = document.getElementById('activities-container');
+      container.innerHTML = '';
+      Object.entries(activities).forEach(([name, info]) => {
+        const card = document.createElement('div');
+        card.className = 'activity-card';
+        card.innerHTML = `
+          <h2>${name}</h2>
+          <p><strong>Description:</strong> ${info.description}</p>
+          <p><strong>Schedule:</strong> ${info.schedule}</p>
+          <p><strong>Max Participants:</strong> ${info.max_participants}</p>
+          <div class="participants-section">
+            <h4>Participants</h4>
+            <ul class="participants-list">
+              ${info.participants.length === 0
+                ? '<li><em>No participants yet</em></li>'
+                : info.participants.map(email => `<li>${email}</li>`).join('')}
+            </ul>
+          </div>
+          <form onsubmit="signupForActivity(event, '${name}')">
+            <input type="email" id="email-${name}" placeholder="Your email" required>
+            <button type="submit">Sign Up</button>
+          </form>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function signupForActivity(event, activityName) {
+      event.preventDefault();
+      const email = document.getElementById(`email-${activityName}`).value;
+      await fetch(`/activities/${activityName}/signup?email=${email}`, {
+        method: 'POST'
+      });
+      alert(`Signed up ${email} for ${activityName}`);
+      // Optionally, refetch activities to update the participants list
+      const activities = await fetchActivities();
+      renderActivities(activities);
+    }
+
+    // Initial fetch and render
+    fetchActivities().then(renderActivities);
+  </script>
+</body>
+</html>
